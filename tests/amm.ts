@@ -29,6 +29,8 @@ describe("constant product AMM", () => {
   let vaultB: PublicKey;
   let treasuryAtaA: PublicKey;
   let treasuryAtaB: PublicKey;
+  let treasuryAtaAKeypair: Keypair;
+  let treasuryAtaBKeypair: Keypair;
   let treasuryDestinationA: PublicKey;
   let treasuryDestinationB: PublicKey;
   let userLpAta: PublicKey;
@@ -38,13 +40,50 @@ describe("constant product AMM", () => {
     PublicKey.findProgramAddressSync(seeds, program.programId)[0];
 
   before(async () => {
-    mintA = await createMint(provider.connection, authority.payer, authority.publicKey, null, 6);
-    mintB = await createMint(provider.connection, authority.payer, authority.publicKey, null, 6);
-    userAtaA = await createAccount(provider.connection, authority.payer, mintA, authority.publicKey);
-    userAtaB = await createAccount(provider.connection, authority.payer, mintB, authority.publicKey);
-    await mintTo(provider.connection, authority.payer, mintA, userAtaA, authority.payer, 2_000_000);
-    await mintTo(provider.connection, authority.payer, mintB, userAtaB, authority.payer, 2_000_000);
-
+    mintA = await createMint(
+      provider.connection,
+      authority.payer,
+      authority.publicKey,
+      null,
+      6,
+    );
+    mintB = await createMint(
+      provider.connection,
+      authority.payer,
+      authority.publicKey,
+      null,
+      6,
+    );
+    userAtaA = await createAccount(
+      provider.connection,
+      authority.payer,
+      mintA,
+      authority.publicKey,
+      Keypair.generate(),
+    );
+    userAtaB = await createAccount(
+      provider.connection,
+      authority.payer,
+      mintB,
+      authority.publicKey,
+      Keypair.generate(),
+    );
+    await mintTo(
+      provider.connection,
+      authority.payer,
+      mintA,
+      userAtaA,
+      authority.payer,
+      2_000_000,
+    );
+    await mintTo(
+      provider.connection,
+      authority.payer,
+      mintB,
+      userAtaB,
+      authority.payer,
+      2_000_000,
+    );
     pool = pda([
       Buffer.from("pool"),
       authority.publicKey.toBuffer(),
@@ -52,24 +91,44 @@ describe("constant product AMM", () => {
       mintB.toBuffer(),
     ]);
     lpMint = pda([Buffer.from("lp-mint"), pool.toBuffer()]);
-    vaultA = await getAssociatedTokenAddress(mintA, pool, true);
-    vaultB = await getAssociatedTokenAddress(mintB, pool, true);
-    treasuryAtaA = await getAssociatedTokenAddress(mintA, treasury.publicKey);
-    treasuryAtaB = await getAssociatedTokenAddress(mintB, treasury.publicKey);
+    vaultA = pda([Buffer.from("vault-a"), pool.toBuffer()]);
+    vaultB = pda([Buffer.from("vault-b"), pool.toBuffer()]);
+    treasuryAtaAKeypair = Keypair.generate();
+    treasuryAtaBKeypair = Keypair.generate();
+    treasuryAtaA = await createAccount(
+      provider.connection,
+      authority.payer,
+      mintA,
+      treasury.publicKey,
+      treasuryAtaAKeypair,
+    );
+    treasuryAtaB = await createAccount(
+      provider.connection,
+      authority.payer,
+      mintB,
+      treasury.publicKey,
+      treasuryAtaBKeypair,
+    );
     treasuryDestinationA = await createAccount(
       provider.connection,
       authority.payer,
       mintA,
       treasury.publicKey,
+      Keypair.generate(),
     );
     treasuryDestinationB = await createAccount(
       provider.connection,
       authority.payer,
       mintB,
       treasury.publicKey,
+      Keypair.generate(),
     );
     userLpAta = await getAssociatedTokenAddress(lpMint, authority.publicKey);
-    position = pda([Buffer.from("position"), pool.toBuffer(), authority.publicKey.toBuffer()]);
+    position = pda([
+      Buffer.from("position"),
+      pool.toBuffer(),
+      authority.publicKey.toBuffer(),
+    ]);
 
     await program.methods
       .initializePool(feeBps, new anchor.BN(initialA), new anchor.BN(initialB))
@@ -100,7 +159,11 @@ describe("constant product AMM", () => {
 
   it("adds liquidity and rejects zero deposits", async () => {
     await program.methods
-      .addLiquidity(new anchor.BN(100_000), new anchor.BN(200_000), new anchor.BN(140_000))
+      .addLiquidity(
+        new anchor.BN(100_000),
+        new anchor.BN(200_000),
+        new anchor.BN(140_000),
+      )
       .accounts({
         user: authority.publicKey,
         pool,
@@ -183,7 +246,11 @@ describe("constant product AMM", () => {
   it("removes liquidity and rejects an excessive minimum", async () => {
     try {
       await program.methods
-        .removeLiquidity(new anchor.BN(1), new anchor.BN(1_000_000_000), new anchor.BN(0))
+        .removeLiquidity(
+          new anchor.BN(1),
+          new anchor.BN(1_000_000_000),
+          new anchor.BN(0),
+        )
         .accounts({
           user: authority.publicKey,
           pool,
@@ -206,7 +273,11 @@ describe("constant product AMM", () => {
     }
 
     await program.methods
-      .removeLiquidity(new anchor.BN(10_000), new anchor.BN(1), new anchor.BN(1))
+      .removeLiquidity(
+        new anchor.BN(10_000),
+        new anchor.BN(1),
+        new anchor.BN(1),
+      )
       .accounts({
         user: authority.publicKey,
         pool,
@@ -241,7 +312,10 @@ describe("constant product AMM", () => {
       })
       .signers([treasury])
       .rpc();
-    const destination = await getAccount(provider.connection, treasuryDestinationA);
+    const destination = await getAccount(
+      provider.connection,
+      treasuryDestinationA,
+    );
     expect(Number(destination.amount)).to.equal(30);
   });
 });

@@ -7,7 +7,7 @@ use anchor_spl::{
     },
 };
 
-declare_id!("5Y6HMSgNYbkcBiQCukYvTK56aQarSpq1Nk9aiSsjws2o");
+declare_id!("ANvcMRJtkyQPkEwRp8wf7eC8zWyCXU5QTbts9aE5cmPw");
 
 const POOL_SEED: &[u8] = b"pool";
 const POSITION_SEED: &[u8] = b"position";
@@ -38,16 +38,16 @@ pub mod amm {
 
         deposit_tokens(
             &ctx.accounts.authority,
-            &ctx.accounts.authority_ata_a,
-            &ctx.accounts.vault_a,
+            &*ctx.accounts.authority_ata_a,
+            &*ctx.accounts.vault_a,
             &ctx.accounts.mint_a,
             &ctx.accounts.token_program,
             initial_a,
         )?;
         deposit_tokens(
             &ctx.accounts.authority,
-            &ctx.accounts.authority_ata_b,
-            &ctx.accounts.vault_b,
+            &*ctx.accounts.authority_ata_b,
+            &*ctx.accounts.vault_b,
             &ctx.accounts.mint_b,
             &ctx.accounts.token_program,
             initial_b,
@@ -467,31 +467,31 @@ pub struct InitializePool<'info> {
         init, payer = authority, seeds = [POOL_SEED, authority.key().as_ref(), mint_a.key().as_ref(), mint_b.key().as_ref()], bump,
         space = 8 + 32 * 4 + 8 + 2 + 1
     )]
-    pub pool: Account<'info, Pool>,
+    pub pool: Box<Account<'info, Pool>>,
     #[account(mint::token_program = token_program)]
-    pub mint_a: InterfaceAccount<'info, Mint>,
+    pub mint_a: Box<InterfaceAccount<'info, Mint>>,
     #[account(mint::token_program = token_program)]
-    pub mint_b: InterfaceAccount<'info, Mint>,
+    pub mint_b: Box<InterfaceAccount<'info, Mint>>,
     /// CHECK: The treasury is stored in the pool and used only as the authority of its ATAs.
     pub treasury: UncheckedAccount<'info>,
     #[account(init, payer = authority, seeds = [b"lp-mint", pool.key().as_ref()], bump, mint::decimals = 6, mint::authority = pool, mint::token_program = token_program)]
-    pub lp_mint: InterfaceAccount<'info, Mint>,
-    #[account(init, payer = authority, associated_token::mint = mint_a, associated_token::authority = pool, associated_token::token_program = token_program)]
-    pub vault_a: InterfaceAccount<'info, TokenAccount>,
-    #[account(init, payer = authority, associated_token::mint = mint_b, associated_token::authority = pool, associated_token::token_program = token_program)]
-    pub vault_b: InterfaceAccount<'info, TokenAccount>,
-    #[account(init, payer = authority, associated_token::mint = mint_a, associated_token::authority = treasury, associated_token::token_program = token_program)]
-    pub treasury_ata_a: InterfaceAccount<'info, TokenAccount>,
-    #[account(init, payer = authority, associated_token::mint = mint_b, associated_token::authority = treasury, associated_token::token_program = token_program)]
-    pub treasury_ata_b: InterfaceAccount<'info, TokenAccount>,
-    #[account(mut, associated_token::mint = mint_a, associated_token::authority = authority, associated_token::token_program = token_program)]
-    pub authority_ata_a: InterfaceAccount<'info, TokenAccount>,
-    #[account(mut, associated_token::mint = mint_b, associated_token::authority = authority, associated_token::token_program = token_program)]
-    pub authority_ata_b: InterfaceAccount<'info, TokenAccount>,
+    pub lp_mint: Box<InterfaceAccount<'info, Mint>>,
+    #[account(init, payer = authority, seeds = [b"vault-a", pool.key().as_ref()], bump, token::mint = mint_a, token::authority = pool, token::token_program = token_program)]
+    pub vault_a: Box<InterfaceAccount<'info, TokenAccount>>,
+    #[account(init, payer = authority, seeds = [b"vault-b", pool.key().as_ref()], bump, token::mint = mint_b, token::authority = pool, token::token_program = token_program)]
+    pub vault_b: Box<InterfaceAccount<'info, TokenAccount>>,
+    #[account(mut, token::mint = mint_a, token::authority = treasury)]
+    pub treasury_ata_a: Box<InterfaceAccount<'info, TokenAccount>>,
+    #[account(mut, token::mint = mint_b, token::authority = treasury)]
+    pub treasury_ata_b: Box<InterfaceAccount<'info, TokenAccount>>,
+    #[account(mut, token::mint = mint_a, token::authority = authority)]
+    pub authority_ata_a: Box<InterfaceAccount<'info, TokenAccount>>,
+    #[account(mut, token::mint = mint_b, token::authority = authority)]
+    pub authority_ata_b: Box<InterfaceAccount<'info, TokenAccount>>,
     #[account(init, payer = authority, associated_token::mint = lp_mint, associated_token::authority = authority, associated_token::token_program = token_program)]
-    pub authority_lp_ata: InterfaceAccount<'info, TokenAccount>,
+    pub authority_lp_ata: Box<InterfaceAccount<'info, TokenAccount>>,
     #[account(init, payer = authority, seeds = [POSITION_SEED, pool.key().as_ref(), authority.key().as_ref()], bump, space = 8 + 32 + 32 + 8 + 1)]
-    pub position: Account<'info, Position>,
+    pub position: Box<Account<'info, Position>>,
     pub token_program: Interface<'info, TokenInterface>,
     pub associated_token_program: Program<'info, AssociatedToken>,
     pub system_program: Program<'info, System>,
@@ -507,9 +507,9 @@ pub struct AddLiquidity<'info> {
     pub mint_a: InterfaceAccount<'info, Mint>,
     #[account(mint::token_program = token_program)]
     pub mint_b: InterfaceAccount<'info, Mint>,
-    #[account(mut, associated_token::mint = mint_a, associated_token::authority = user, associated_token::token_program = token_program)]
+    #[account(mut, token::mint = mint_a, token::authority = user)]
     pub user_ata_a: InterfaceAccount<'info, TokenAccount>,
-    #[account(mut, associated_token::mint = mint_b, associated_token::authority = user, associated_token::token_program = token_program)]
+    #[account(mut, token::mint = mint_b, token::authority = user)]
     pub user_ata_b: InterfaceAccount<'info, TokenAccount>,
     #[account(mut, token::mint = mint_a, token::authority = pool)]
     pub vault_a: InterfaceAccount<'info, TokenAccount>,
@@ -539,9 +539,9 @@ pub struct RemoveLiquidity<'info> {
     pub vault_a: InterfaceAccount<'info, TokenAccount>,
     #[account(mut, token::mint = mint_b, token::authority = pool)]
     pub vault_b: InterfaceAccount<'info, TokenAccount>,
-    #[account(mut, associated_token::mint = mint_a, associated_token::authority = user, associated_token::token_program = token_program)]
+    #[account(mut, token::mint = mint_a, token::authority = user)]
     pub user_ata_a: InterfaceAccount<'info, TokenAccount>,
-    #[account(mut, associated_token::mint = mint_b, associated_token::authority = user, associated_token::token_program = token_program)]
+    #[account(mut, token::mint = mint_b, token::authority = user)]
     pub user_ata_b: InterfaceAccount<'info, TokenAccount>,
     #[account(mut, token::mint = lp_mint, token::authority = user)]
     pub user_lp_ata: InterfaceAccount<'info, TokenAccount>,
@@ -568,13 +568,13 @@ pub struct Swap<'info> {
     pub vault_a: InterfaceAccount<'info, TokenAccount>,
     #[account(mut, token::mint = mint_b, token::authority = pool)]
     pub vault_b: InterfaceAccount<'info, TokenAccount>,
-    #[account(mut, associated_token::mint = mint_a, associated_token::authority = user, associated_token::token_program = token_program)]
+    #[account(mut, token::mint = mint_a, token::authority = user)]
     pub user_ata_a: InterfaceAccount<'info, TokenAccount>,
-    #[account(mut, associated_token::mint = mint_b, associated_token::authority = user, associated_token::token_program = token_program)]
+    #[account(mut, token::mint = mint_b, token::authority = user)]
     pub user_ata_b: InterfaceAccount<'info, TokenAccount>,
-    #[account(mut, associated_token::mint = mint_a, associated_token::authority = pool.treasury, associated_token::token_program = token_program)]
+    #[account(mut, token::mint = mint_a, token::authority = pool.treasury)]
     pub treasury_ata_a: InterfaceAccount<'info, TokenAccount>,
-    #[account(mut, associated_token::mint = mint_b, associated_token::authority = pool.treasury, associated_token::token_program = token_program)]
+    #[account(mut, token::mint = mint_b, token::authority = pool.treasury)]
     pub treasury_ata_b: InterfaceAccount<'info, TokenAccount>,
     pub token_program: Interface<'info, TokenInterface>,
 }
@@ -589,13 +589,13 @@ pub struct CollectFees<'info> {
     pub mint_a: InterfaceAccount<'info, Mint>,
     #[account(mint::token_program = token_program)]
     pub mint_b: InterfaceAccount<'info, Mint>,
-    #[account(mut, associated_token::mint = mint_a, associated_token::authority = treasury, associated_token::token_program = token_program)]
+    #[account(mut, token::mint = mint_a, token::authority = treasury)]
     pub treasury_ata_a: InterfaceAccount<'info, TokenAccount>,
-    #[account(mut, associated_token::mint = mint_b, associated_token::authority = treasury, associated_token::token_program = token_program)]
+    #[account(mut, token::mint = mint_b, token::authority = treasury)]
     pub treasury_ata_b: InterfaceAccount<'info, TokenAccount>,
-    #[account(mut, associated_token::mint = mint_a, associated_token::authority = treasury)]
+    #[account(mut, token::mint = mint_a, token::authority = treasury)]
     pub treasury_destination_a: InterfaceAccount<'info, TokenAccount>,
-    #[account(mut, associated_token::mint = mint_b, associated_token::authority = treasury)]
+    #[account(mut, token::mint = mint_b, token::authority = treasury)]
     pub treasury_destination_b: InterfaceAccount<'info, TokenAccount>,
     pub token_program: Interface<'info, TokenInterface>,
 }

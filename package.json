@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "test": "anchor test",
+    "test:integration": "ts-mocha -p tsconfig.json -t 1000000 tests/**/*.ts",
     "lint": "prettier --check tests"
   },
   "devDependencies": {
@@ -11,6 +12,8 @@
     "@solana/web3.js": "^1.98.4",
     "chai": "^4.5.0",
     "prettier": "^3.5.3",
+    "ts-mocha": "^10.0.0",
+    "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   }
 }

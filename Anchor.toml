@@ -6,11 +6,11 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-amm = "5Y6HMSgNYbkcBiQCukYvTK56aQarSpq1Nk9aiSsjws2o"
+amm = "ANvcMRJtkyQPkEwRp8wf7eC8zWyCXU5QTbts9aE5cmPw"
 
 [provider]
 cluster = "localnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
-test = "cargo test --workspace"
+test = "npm run test:integration"
