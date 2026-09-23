@@ -40,6 +40,17 @@ With AVM-managed Anchor installations, select the version declared in
 `docs/test-output.txt` contains the verified passing output from the legacy
 Solana toolchain used for this submission.
 
+If `anchor test` reports that RPC port `8899` is already in use, a local
+validator is already running. Reuse it instead of starting a second validator:
+
+```bash
+~/.avm/bin/anchor-0.30.1 test --skip-local-validator
+```
+
+Alternatively, stop only the existing `solana-test-validator` process and rerun
+`anchor test`. Confirm that the existing endpoint is healthy first with
+`solana slot --url http://127.0.0.1:8899`.
+
 The Rust tests validate the CPMM quote and share math. `tests/amm.ts` is the Anchor
 integration-test checklist covering initialization, adding/removing liquidity, both swap
 directions, slippage failures, and treasury fee collection. Run `anchor test` against a

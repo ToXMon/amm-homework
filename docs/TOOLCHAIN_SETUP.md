@@ -55,6 +55,27 @@ can compile newer crates.
    version that the SBF builder uses. A newer host Cargo can silently upgrade
    the lockfile to version 4, which Cargo 1.75 cannot read.
 
+### RPC port 8899 already in use
+
+Anchor's local validator uses RPC port 8899. If another
+`solana-test-validator` is already running, starting a second one fails. Check
+the existing endpoint:
+
+```bash
+solana slot --url http://127.0.0.1:8899
+solana cluster-version --url http://127.0.0.1:8899
+```
+
+If it responds, reuse it:
+
+```bash
+~/.avm/bin/anchor-0.30.1 test --skip-local-validator
+```
+
+Only if the endpoint is stale should you stop the specific validator process
+owning the port, then run normal `anchor test`. Avoid broad process-kill
+commands; another Solana project may be using the same validator.
+
 ## A deterministic diagnosis loop
 
 When a build fails, capture versions and classify the first error rather than
