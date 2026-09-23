@@ -40,6 +40,13 @@ With AVM-managed Anchor installations, select the version declared in
 `docs/test-output.txt` contains the verified passing output from the legacy
 Solana toolchain used for this submission.
 
+### Passing test evidence
+
+The screenshot below shows the deployed program and all five Anchor integration tests
+passing:
+
+![Anchor integration tests passing](https://github.com/user-attachments/assets/9f9d7a64-96b6-4658-81b5-a21687779080)
+
 If `anchor test` reports that RPC port `8899` is already in use, a local
 validator is already running. Reuse it instead of starting a second validator:
 
