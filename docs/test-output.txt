@@ -1,0 +1,121 @@
+Error: Function _ZN3amm9__private8__global15initialize_pool17h55d2e68c8e05117fE Stack offset of 4440 exceeded max offset of 4096 by 344 bytes, please minimize large stack variables. Estimated function frame size: 4464 bytes. Exceeding the maximum stack offset may cause undefined behavior during execution.
+
+Error: A function call in method _ZN3amm9__private8__global15initialize_pool17h55d2e68c8e05117fE overwrites values in the frame. Please, decrease stack usage or remove parameters from the call.The function call may cause undefined behavior during execution.
+
+Error: Function _ZN93_$LT$amm..InitializePool$u20$as$u20$anchor_lang..Accounts$LT$amm..InitializePoolBumps$GT$$GT$12try_accounts17h01f297976fe9ab2eE Stack offset of 9928 exceeded max offset of 4096 by 5832 bytes, please minimize large stack variables. Estimated function frame size: 10224 bytes. Exceeding the maximum stack offset may cause undefined behavior during execution.
+
+Error: Function _ZN89_$LT$amm..AddLiquidity$u20$as$u20$anchor_lang..Accounts$LT$amm..AddLiquidityBumps$GT$$GT$12try_accounts17h7eb967d727cbf336E Stack offset of 4104 exceeded max offset of 4096 by 8 bytes, please minimize large stack variables. Estimated function frame size: 4248 bytes. Exceeding the maximum stack offset may cause undefined behavior during execution.
+
+    Finished release [optimized] target(s) in 0.72s
+warning: hiding a lifetime that's elided elsewhere is confusing
+  --> vendor/anchor-syn/src/parser/context.rs:41:20
+   |
+41 |     pub fn modules(&self) -> impl Iterator<Item = ModuleContext> {
+   |                    ^^^^^                          ^^^^^^^^^^^^^ the same lifetime is hidden here
+   |                    |
+   |                    the lifetime is elided here
+   |
+   = help: the same lifetime is referred to in inconsistent ways, making the signature confusing
+   = note: `#[warn(mismatched_lifetime_syntaxes)]` on by default
+help: use `'_` for type paths
+   |
+41 |     pub fn modules(&self) -> impl Iterator<Item = ModuleContext<'_>> {
+   |                                                                ++++
+
+warning: hiding a lifetime that's elided elsewhere is confusing
+  --> vendor/anchor-syn/src/parser/context.rs:45:24
+   |
+45 |     pub fn root_module(&self) -> ModuleContext {
+   |                        ^^^^^     ^^^^^^^^^^^^^ the same lifetime is hidden here
+   |                        |
+   |                        the lifetime is elided here
+   |
+   = help: the same lifetime is referred to in inconsistent ways, making the signature confusing
+help: use `'_` for type paths
+   |
+45 |     pub fn root_module(&self) -> ModuleContext<'_> {
+   |                                               ++++
+
+warning: `anchor-syn` (lib) generated 2 warnings (run `cargo fix --lib -p anchor-syn` to apply 2 suggestions)
+warning: unexpected `cfg` condition value: `no-idl`
+  --> programs/amm/src/lib.rs:17:1
+   |
+17 | #[program]
+   | ^^^^^^^^^^
+   |
+   = note: expected values for `feature` are: `anchor-debug`, `cpi`, `custom-heap`, `custom-panic`, `default`, `idl-build`, `no-entrypoint`, and `no-log-ix-name`
+   = note: using a cfg inside a attribute macro will use the cfgs from the destination crate and not the ones from the defining crate
+   = help: try referring to `program` crate for guidance on how handle this unexpected cfg
+   = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+   = note: requested on the command line with `-W unexpected-cfgs`
+   = note: this warning originates in the attribute macro `program` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: `amm` (lib test) generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.74s
+     Running unittests src/lib.rs (/Users/tolushekoni/copilot-worktrees/sb2026/toxmon-refactored-waffle/target/debug/build/amm/2c32915b9afadfd6/out/amm-2c32915b9afadfd6)
+
+Found a 'test' script in the Anchor.toml. Running it as a test suite!
+
+Running test suite: "/Users/tolushekoni/copilot-worktrees/sb2026/toxmon-refactored-waffle/Anchor.toml"
+
+warning: hiding a lifetime that's elided elsewhere is confusing
+  --> vendor/anchor-syn/src/parser/context.rs:41:20
+   |
+41 |     pub fn modules(&self) -> impl Iterator<Item = ModuleContext> {
+   |                    ^^^^^                          ^^^^^^^^^^^^^ the same lifetime is hidden here
+   |                    |
+   |                    the lifetime is elided here
+   |
+   = help: the same lifetime is referred to in inconsistent ways, making the signature confusing
+   = note: `#[warn(mismatched_lifetime_syntaxes)]` on by default
+help: use `'_` for type paths
+   |
+41 |     pub fn modules(&self) -> impl Iterator<Item = ModuleContext<'_>> {
+   |                                                                ++++
+
+warning: hiding a lifetime that's elided elsewhere is confusing
+  --> vendor/anchor-syn/src/parser/context.rs:45:24
+   |
+45 |     pub fn root_module(&self) -> ModuleContext {
+   |                        ^^^^^     ^^^^^^^^^^^^^ the same lifetime is hidden here
+   |                        |
+   |                        the lifetime is elided here
+   |
+   = help: the same lifetime is referred to in inconsistent ways, making the signature confusing
+help: use `'_` for type paths
+   |
+45 |     pub fn root_module(&self) -> ModuleContext<'_> {
+   |                                               ++++
+
+warning: `anchor-syn` (lib) generated 2 warnings (run `cargo fix --lib -p anchor-syn` to apply 2 suggestions)
+warning: unexpected `cfg` condition value: `no-idl`
+  --> programs/amm/src/lib.rs:17:1
+   |
+17 | #[program]
+   | ^^^^^^^^^^
+   |
+   = note: expected values for `feature` are: `anchor-debug`, `cpi`, `custom-heap`, `custom-panic`, `default`, `idl-build`, `no-entrypoint`, and `no-log-ix-name`
+   = note: using a cfg inside a attribute macro will use the cfgs from the destination crate and not the ones from the defining crate
+   = help: try referring to `program` crate for guidance on how handle this unexpected cfg
+   = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+   = note: requested on the command line with `-W unexpected-cfgs`
+   = note: this warning originates in the attribute macro `program` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: `amm` (lib) generated 1 warning
+warning: `amm` (lib test) generated 1 warning (1 duplicate)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.62s
+     Running unittests src/lib.rs (target/debug/deps/amm-0700b641462a6d71)
+
+running 3 tests
+test test_id ... ok
+test tests::integer_sqrt_is_floor_sqrt ... ok
+test tests::swap_quote_charges_fee_before_constant_product_quote ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests amm
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

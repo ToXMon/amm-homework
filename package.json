@@ -1,0 +1,16 @@
+{
+  "name": "amm-homework",
+  "private": true,
+  "scripts": {
+    "test": "anchor test",
+    "lint": "prettier --check tests"
+  },
+  "devDependencies": {
+    "@coral-xyz/anchor": "^0.30.1",
+    "@solana/spl-token": "^0.4.9",
+    "@solana/web3.js": "^1.98.4",
+    "chai": "^4.5.0",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.3"
+  }
+}
